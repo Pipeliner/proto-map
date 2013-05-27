@@ -18,17 +18,42 @@
 
 	<script>
 
-	var marker1 = L.marker([59.934289, 30.306667], {title:'Исаакиевский собор'}).bindPopup('<a href="http://goo.gl/2QeN1" target="_blank">Исаакиевский собор</a>'),
-		marker2 = L.marker([59.933333, 30.343333], {title:'Аничков мост'}).bindPopup('<a href="http://goo.gl/sLcGk" target="_blank">Аничков мост</a>'),
-		marker3 = L.marker([59.935833, 30.325556], {title:'Дом книги'}).bindPopup('<a href="http://goo.gl/U7Hje" target="_blank">Дом книги</a>'),
-		marker4 = L.marker([59.940161, 30.328597], {title:'Спас на Крови'}).bindPopup('<a href="http://goo.gl/YYRfm" target="_blank">Спас на Крови</a>');
-		marker5 = L.marker([59.940556, 30.313611], {title:'Государственный Эрмитаж'}).bindPopup('<a href="http://goo.gl/RpoSm" target="_blank">Государственный Эрмитаж</a>');
+	function addMarker(latlng, title, link) {
+		return L.marker(latlng, {title: title}).bindPopup('<a href ="' + link + '" target="_blank">' + title + '</a>');
+	}
 
-	var architecture = L.layerGroup([marker2, marker3]),
-		cathedrals = L.layerGroup([marker1, marker4]),
-		museums = L.layerGroup([marker5]),
-		monuments = L.layerGroup([]),
-		theatres = L.layerGroup([]);
+	function addMarkerEntry(entry) {
+		//console.log(entry["latlng"], entry["title"], entry["link"]);
+		return addMarker(entry["latlng"], entry["title"], entry["link"]);
+	}
+
+	function loadMarkerGroup(groupName) {
+		var group = groupName.map(addMarkerEntry);
+		//console.log(group);
+		return group;
+	}
+
+	var cathedrals_data = [
+		{latlng:[59.934289, 30.306667], title:'Исаакиевский собор', link:"http://goo.gl/2QeN1"},
+		{latlng:[59.940161, 30.328597], title:'Спас на Крови', link:"http://goo.gl/YYRfm"}
+	];
+
+	var architecture_data = [
+		{latlng:[59.933333, 30.343333], title:'Аничков мост', link:"http://goo.gl/sLcGk"},
+		{latlng:[59.935833, 30.325556], title:'Дом Книги', link:"http://goo.gl/U7Hje"}
+	];
+
+	var museums_data = [
+		{latlng:[59.940556, 30.313611], title:'Государственный Эрмитаж', link:"http://goo.gl/RpoSm"}
+	];
+
+	var cathedrals_markers = loadMarkerGroup(cathedrals_data),
+		architecture_markers = loadMarkerGroup(architecture_data),
+		museums_markers = loadMarkerGroup(museums_data);
+
+	var architecture = L.layerGroup(architecture_markers),
+		cathedrals = L.layerGroup(cathedrals_markers),
+		museums = L.layerGroup(museums_markers);
 
 	var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
 	cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
@@ -80,8 +105,6 @@
 	var overlayMaps = {
 	"Архитектура": architecture,	
 	"Музеи": museums,
-	"Памятники": monuments,
-	"Театры": theatres,
 	"Храмы": cathedrals
 
 	};
